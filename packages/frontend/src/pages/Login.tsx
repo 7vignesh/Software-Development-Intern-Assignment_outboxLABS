@@ -1,8 +1,9 @@
 import { getLoginUrl } from '../api/auth';
 
 /**
- * Login page with Google OAuth button.
- * Centered card layout with app branding.
+ * Login page matching Figma design.
+ * Centered white card on light gray background with Google OAuth
+ * and decorative email/password fields.
  */
 export function Login() {
   const handleLogin = () => {
@@ -11,13 +12,13 @@ export function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Email Scheduler</h1>
-        <p className="text-gray-500 mb-8">Sign in to manage your scheduled emails</p>
+      <div className="bg-white p-8 rounded-xl shadow-sm w-full max-w-md">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Login</h1>
 
+        {/* Google Login Button */}
         <button
           onClick={handleLogin}
-          className="flex items-center justify-center gap-3 w-full px-4 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-green-50 border border-green-100 rounded-lg hover:bg-green-100 transition-colors mb-6"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -37,7 +38,38 @@ export function Login() {
               fill="#EA4335"
             />
           </svg>
-          <span className="text-gray-700 font-medium">Sign in with Google</span>
+          <span className="text-gray-700 font-medium">Login with Google</span>
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-sm text-gray-400">or sign up through email</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Decorative Email/Password fields (non-functional) */}
+        <div className="space-y-4 mb-6">
+          <input
+            type="email"
+            placeholder="Email ID"
+            className="w-full px-4 py-3 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-green-300"
+            readOnly
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full px-4 py-3 bg-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-green-300"
+            readOnly
+          />
+        </div>
+
+        {/* Login button (also triggers Google OAuth) */}
+        <button
+          onClick={handleLogin}
+          className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors"
+        >
+          Login
         </button>
       </div>
     </div>
