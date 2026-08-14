@@ -1,0 +1,28 @@
+{
+  "name": "email-job-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-grade full-stack email job scheduler service with React dashboard",
+  "workspaces": [
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "npm run build --workspace=packages/backend && npm run build --workspace=packages/frontend",
+    "test": "npm run test --workspace=packages/backend",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:migrate": "npm run prisma:migrate --workspace=packages/backend",
+    "db:seed": "ts-node packages/backend/src/seed.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "ts-node": "^10.9.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
