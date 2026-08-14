@@ -47,9 +47,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
       path: '/',
     });
 
-    // Redirect to frontend dashboard
+    // Redirect to frontend dashboard with token in URL for cross-port persistence
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}/dashboard`);
+    res.redirect(`${frontendUrl}/dashboard?token=${sessionToken}`);
   } catch (error) {
     console.error('[Auth] Google callback error:', (error as Error).message);
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';

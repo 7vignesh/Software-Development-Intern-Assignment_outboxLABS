@@ -10,5 +10,14 @@ const client = axios.create({
   },
 });
 
+// Attach session token from localStorage as Authorization header on every request
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem('session_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export { API_BASE };
 export default client;
