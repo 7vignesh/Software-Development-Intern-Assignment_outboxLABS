@@ -24,6 +24,18 @@ export function Compose() {
   const [showSendLater, setShowSendLater] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [emailInput, setEmailInput] = useState('');
+
+  const handleEmailInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const email = emailInput.trim().toLowerCase();
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !validEmails.includes(email)) {
+        setValidEmails((prev) => [...prev, email]);
+      }
+      setEmailInput('');
+    }
+  };
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -266,6 +278,14 @@ export function Compose() {
               {overflowCount > 0 && (
                 <span className="text-xs text-gray-500 font-medium">+{overflowCount}</span>
               )}
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                onKeyDown={handleEmailInputKeyDown}
+                placeholder={validEmails.length === 0 ? "recipient@example.com" : ""}
+                className="flex-1 min-w-[150px] text-sm text-gray-800 outline-none placeholder-gray-400"
+              />
               <input type="file" ref={fileInputRef} accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
               <button
                 onClick={() => fileInputRef.current?.click()}
