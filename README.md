@@ -198,3 +198,62 @@ The system is designed to survive server restarts without data loss or email dup
 | SMTP | Nodemailer + Ethereal |
 | Auth | Google OAuth 2.0 |
 | Containers | Docker Compose |
+
+## Setting Up Ethereal Email
+
+1. Go to [https://ethereal.email](https://ethereal.email)
+2. Click "Create Ethereal Account" (no signup needed)
+3. Copy the generated username and password
+4. Set them in your `.env`:
+   ```
+   SMTP_HOST=smtp.ethereal.email
+   SMTP_PORT=587
+   SMTP_USER=your-generated-user@ethereal.email
+   SMTP_PASS=your-generated-password
+   ```
+5. After emails are sent, log into Ethereal with those same credentials to view them in the inbox
+
+Ethereal is a fake SMTP service — emails are captured but never delivered to real recipients. This is ideal for testing.
+
+## Features Implemented
+
+### Backend
+| Feature | Status | Details |
+|---------|--------|---------|
+| Email Scheduling API | ✅ | POST /api/emails/schedule with batch support |
+| BullMQ Delayed Jobs | ✅ | No cron — uses BullMQ delayed jobs backed by Redis |
+| Persistence on Restart | ✅ | Redis AOF + DB state + idempotency guard |
+| Rate Limiting (per-sender) | ✅ | Redis atomic counters, configurable hourly limit |
+| Inter-email Delay | ✅ | Configurable min delay between sends (default 2s) |
+| Worker Concurrency | ✅ | Configurable via WORKER_CONCURRENCY env var |
+| Idempotency | ✅ | SHA-256 idempotency key prevents duplicate sends |
+| Automatic Rescheduling | ✅ | Rate-limited jobs rescheduled to next window |
+| Batch Distribution | ✅ | 1000+ emails distributed across hourly windows |
+| Transient Error Retry | ✅ | 3 retries with exponential backoff |
+| Google OAuth 2.0 | ✅ | Real Google login with session management |
+| Ethereal SMTP | ✅ | Fake SMTP for testing, emails visible in Ethereal inbox |
+
+### Frontend
+| Feature | Status | Details |
+|---------|--------|---------|
+| Google Login | ✅ | Real OAuth, shows name/email/avatar |
+| Dashboard Layout | ✅ | Sidebar with navigation (Figma design) |
+| Compose Email | ✅ | Subject, body, recipients (type or upload CSV) |
+| CSV/Text Upload | ✅ | Parse email addresses from file |
+| Schedule Configuration | ✅ | Start time, delay, hourly limit, Send Later popup |
+| Scheduled Emails View | ✅ | List with recipient, time badge, subject preview |
+| Sent Emails View | ✅ | List with sent status and timestamp |
+| Loading States | ✅ | Skeleton loaders while fetching |
+| Empty States | ✅ | Message when no emails exist |
+| Error Handling | ✅ | Error display with retry button |
+| Pagination | ✅ | Previous/Next with page indicator |
+| TypeScript | ✅ | Full type safety, interfaces for API responses |
+| Reusable Components | ✅ | EmailTable, FileUpload, Pagination, etc. |
+
+## Assumptions & Trade-offs
+
+- **Rich text toolbar is decorative**: The compose page shows a formatting toolbar (bold, italic, etc.) matching the Figma, but the body is submitted as plain text. A full rich text editor (e.g., TipTap) would add significant complexity for this scope.
+- **Email/password fields on login are visual-only**: The Figma shows email/password inputs, but the assignment requires Google OAuth only. The fields are shown for design fidelity but don't function.
+- **Ethereal SMTP only**: No real email delivery — all emails are captured by Ethereal for testing purposes.
+- **Session stored in memory (production warning)**: Express session uses MemoryStore. For true production, a Redis session store would be used.
+- **Free-tier hosting limitations**: Render free tier may sleep after inactivity. Upstash Redis has connection limits that cause occasional ECONNRESET (auto-reconnects).
